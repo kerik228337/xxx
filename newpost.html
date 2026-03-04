@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <title>New Post</title>
+  </head>
+  <body>
+    <h1>Create New Post</h1>
+    <form id="postForm">
+      <textarea id="content" placeholder="Write your post here..."></textarea
+      ><br />
+      <label><input type="checkbox" id="private" /> Private</label><br />
+      <button type="submit">Submit</button>
+    </form>
+
+    <p id="msg"></p>
+
+    <script>
+      document
+        .getElementById("postForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const res = await fetch("/api/post/new", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              content: document.getElementById("content").value,
+              private: document.getElementById("private").checked,
+            }),
+          });
+          document.getElementById("msg").textContent = res.ok
+            ? "Post created!"
+            : "Error creating post (maybe not logged in?)";
+        });
+    </script>
+  </body>
+</html>

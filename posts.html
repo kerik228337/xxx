@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Public Posts</title>
+  </head>
+  <body>
+    <h1>Public Posts</h1>
+    <button onclick="loadPosts()">Refresh</button>
+    <ul id="posts"></ul>
+
+    <script>
+      async function loadPosts() {
+        const res = await fetch("/api/posts");
+        const data = await res.json();
+        const list = document.getElementById("posts");
+        list.innerHTML = "";
+        data.forEach((post) => {
+          const li = document.createElement("li");
+          li.textContent = post.username + ": " + post.content;
+          list.appendChild(li);
+        });
+      }
+      loadPosts();
+    </script>
+  </body>
+</html>

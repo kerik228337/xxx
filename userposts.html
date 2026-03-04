@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <title>My Posts</title>
+  </head>
+  <body>
+    <h1>My Posts</h1>
+    <button onclick="loadUserPosts()">Refresh</button>
+    <ul id="posts"></ul>
+
+    <script>
+      async function loadUserPosts() {
+        const res = await fetch("/api/user/posts");
+        if (!res.ok) {
+          document.getElementById("posts").innerHTML =
+            "<li>Error: Not logged in</li>";
+          return;
+        }
+        const data = await res.json();
+        const list = document.getElementById("posts");
+        list.innerHTML = "";
+        data.forEach((post) => {
+          const li = document.createElement("li");
+          li.textContent = post.content;
+          list.appendChild(li);
+        });
+      }
+      loadUserPosts();
+    </script>
+  </body>
+</html>

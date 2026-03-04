@@ -1,0 +1,46 @@
+name: bashist-ad-ctf-service
+
+services:
+  db:
+    image: postgres:17.6-alpine3.22
+    environment:
+      - POSTGRES_DB=bashist
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - bashist-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  bashist:
+    build: .
+    environment:
+      - PGHOST=db
+      - PGDATABASE=bashist
+      - PGUSER=postgres
+      - PGPASSWORD=password
+    ports:
+      - 1599:8080
+    volumes:
+      - pgdata:/pgdata
+    networks:
+      - bashist-network
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  bashist-network:
+    driver: bridge
